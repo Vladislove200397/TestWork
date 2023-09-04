@@ -1,5 +1,5 @@
 //
-//  UIColor+Extension.swift
+//  APPColor.swift
 //  TestWork
 //
 //  Created by Vlad Kulakovsky  on 4.09.23.

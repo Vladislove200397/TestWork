@@ -7,23 +7,37 @@
 
 import Foundation
 
-class BreedsListControllerViewModel {
-    private var networkManager: NetworkManager
-    @Published
-    private(set) var breedsArray: [BreedModel] = []
-    var page: Int = 0
+final class BreedsListControllerViewModel {
+    // - Property
+    var breedsDataService: NetworkManager<[BreedModel]>
+    private var loadTask: Task<Void, Never>?
     
-    init(networkManager: NetworkManager) {
-        self.networkManager = networkManager
+    // - Data
+    @Published private(set) var breedsArray: [BreedModel] = []
+    
+    // - Flag
+    var page: Int = 0
+    var isLoad = false
+    
+    // - Lifecycle
+    init(
+        breedNetworkManager: NetworkManager<[BreedModel]>
+    ) {
+        self.breedsDataService = breedNetworkManager
     }
     
+//MARK: Get Data
     func getBreeds() {
-        Task { @MainActor in
+        isLoad = true
+        loadTask?.cancel()
+        
+        loadTask = Task {
             do {
-                let result = try await networkManager.getBreeds(page: page)
-                self.breedsArray.append(contentsOf: result)
+                let breedsModel = try await breedsDataService.getData(.breeds(page: page))
+                breedsArray.append(contentsOf: breedsModel)
+                isLoad = false
             } catch let error {
-                print(error)
+                print(error.localizedDescription)
             }
         }
     }

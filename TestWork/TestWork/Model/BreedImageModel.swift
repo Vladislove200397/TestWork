@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+struct BreedImageModel: Decodable {
+    var url: String
+    var id: String
+}

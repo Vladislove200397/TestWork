@@ -6,18 +6,15 @@
 //
 
 import Foundation
-import Moya
 
-enum CatApiManager: TargetType {
-case breeds(page: Int)
-case image(id: String)
+enum BreedApiManager: RESTConstructor {
+    case breeds(page: Int)
+    case imageURL(id: String)
     
-    var baseURL: URL {
+    var baseURL: String {
         switch self {
-            case .breeds:
-                return URL(string: "https://api.thecatapi.com/v1")!
-            case .image:
-                return URL(string: "https://cdn2.thecatapi.com/images/")!
+            case .breeds, .imageURL:
+                return "https://api.thecatapi.com/v1/"
         }
     }
     
@@ -25,36 +22,44 @@ case image(id: String)
         switch self {
             case .breeds:
                 return "breeds"
-            case .image(let id):
-                return "\(id).jpg"
+            case .imageURL:
+                return "images/search"
         }
     }
     
-    var method: Moya.Method {
-        .get
-    }
-    
-    var task: Moya.Task {
-        guard let parameters else { return .requestPlain }
-        return .requestParameters(parameters: parameters, encoding: encoding)
-    }
-    
-    var encoding: ParameterEncoding {
-        URLEncoding.queryString
-    }
-    
-    var parameters: [String: Any]? {
+    var params: [String : Any]? {
         var parameters = [String: Any]()
         switch self {
             case .breeds(page: let page):
                 parameters["limit"] = "10"
-                parameters["page"] = page
-            default: return nil
+                parameters["page"] = "\(page)"
+            case .imageURL(id: let id):
+                parameters["breed_ids"] = id
         }
         return parameters
     }
     
-    var headers: [String : String]? {
-        nil
+    var method: RequestPathType {
+        .query
     }
+    
+    var requestType: RequestType {
+        .get
+    }
+    
+    static func createURL(request: BreedApiManager) -> URLComponents {
+        var components = URLComponents(string: "\(request.baseURL)\(request.path)\(request.method.requestPathType)")!
+        
+        guard let  parameters = request.params else {
+            return components
+        }
+
+        components.queryItems = parameters.map { (key, value) in
+            return URLQueryItem(name: key, value: value as? String)
+        }
+        
+        components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
+        return components
+    }
+
 }

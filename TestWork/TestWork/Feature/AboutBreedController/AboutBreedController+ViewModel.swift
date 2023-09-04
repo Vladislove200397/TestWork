@@ -6,3 +6,15 @@
 //
 
 import Foundation
+import Combine
+
+final class AboutBreedControllerViewModel {
+    // - Data
+    @Published private(set) var wikiURL: String
+    private(set) var breedName: String
+    
+    init(wikiURL: String, breedName: String) {
+        self.wikiURL = wikiURL
+        self.breedName = breedName
+    }
+}
