@@ -34,6 +34,11 @@ final class BreedsListControllerViewModel {
         loadTask = Task {
             do {
                 let breedsModel = try await breedsDataService.getData(.breeds(page: page))
+                guard !breedsModel.isEmpty else {
+                    loadTask?.cancel()
+                    isLoad = false
+                    return
+                }
                 breedsArray.append(contentsOf: breedsModel)
                 isLoad = false
             } catch let error {
