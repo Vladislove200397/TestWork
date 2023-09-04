@@ -68,12 +68,13 @@ final class BreedCollectionViewCell: UICollectionViewCell {
     private func makeConstraints() {
         breedImageView.snp.makeConstraints { make in
             make.leading.trailing.top.equalToSuperview().inset(10)
-            make.bottom.equalToSuperview().offset(-35)
+            make.bottom.equalToSuperview().offset(-40)
         }
         
         nameLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(8)
             make.trailing.bottom.equalToSuperview().offset(-8)
+            make.top.equalTo(breedImageView.snp.bottom).offset(5)
         }
         
         activityIndicator.snp.makeConstraints { make in
