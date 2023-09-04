@@ -96,7 +96,7 @@ final class BreedCollectionViewCell: UICollectionViewCell {
                 try await self?.breedImageView.setImage(by: url)
                 self?.breedImageView.contentMode = .scaleAspectFill
             } catch {
-                self?.breedImageView.contentMode = .center
+                
             }
             
             self?.activityIndicator.stopAnimating()
